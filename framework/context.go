@@ -15,8 +15,8 @@ type Context struct {
 }
 
 // NewContext 构造函数
-func NewContext(r *http.Request, w http.ResponseWriter) Context {
-	return Context{
+func NewContext(r *http.Request, w http.ResponseWriter) *Context {
+	return &Context{
 		request:        r,
 		responseWriter: w,
 	}
@@ -47,6 +47,10 @@ func (c *Context) HasTimeout() bool {
 }
 
 // Context要实现标准context的接口
+
+func (c *Context) BaseContext() context.Context {
+	return c.request.Context()
+}
 
 func (c *Context) Done() <-chan struct{} {
 	return nil
