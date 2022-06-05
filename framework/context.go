@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"strconv"
+	"sync"
 	"time"
 )
 
@@ -12,6 +13,8 @@ type Context struct {
 	ctx            context.Context
 	request        *http.Request
 	responseWriter http.ResponseWriter
+	writeMux       *sync.Mutex
+	hasTimeout     bool // 是否超时标记位
 }
 
 // NewContext 构造函数
@@ -24,8 +27,8 @@ func NewContext(r *http.Request, w http.ResponseWriter) *Context {
 
 // base功能
 
-func (c *Context) WriterMux() {
-
+func (c *Context) WriterMux() *sync.Mutex {
+	return c.writeMux
 }
 
 func (c *Context) GetRequest() *http.Request {
@@ -38,7 +41,7 @@ func (c *Context) GetResponse() http.ResponseWriter {
 
 // SetHasTimeout 设置context的超时时间
 func (c *Context) SetHasTimeout() {
-
+	c.hasTimeout = true
 }
 
 // HasTimeout 查看一个context的超时时间
@@ -123,6 +126,10 @@ func (c *Context) FormAll() map[string][]string {
 
 // Json 返回json结构
 func (c *Context) Json(status int, obj interface{}) error {
+	if c.HasTimeout() {
+		// 已经超时了
+		return nil
+	}
 	c.responseWriter.Header().Set("Content-Type", "application/json")
 	c.responseWriter.WriteHeader(status)
 

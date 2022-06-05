@@ -39,8 +39,11 @@ func FooControllerHandler(c *framework.Context) error {
 		// 业务逻辑执行完成
 		fmt.Printf("finish\n")
 	case <-durationCtx.Done():
+		c.WriterMux().Lock()
+		defer c.WriterMux().Unlock()
 		// 超时时间到
 		fmt.Printf("timeout\n")
+		c.SetHasTimeout()
 	}
 
 	return nil
