@@ -13,9 +13,9 @@ func FooControllerHandler(c *framework.Context) error {
 	finish := make(chan struct{}, 1)
 	panicChan := make(chan interface{}, 1)
 
-	durationCtx, cancle := context.WithTimeout(c.BaseContext(),
+	durationCtx, cancel := context.WithTimeout(c.BaseContext(),
 		time.Duration(1*time.Second))
-	defer cancle()
+	defer cancel()
 
 	go func() {
 		// 距离的业务逻辑
