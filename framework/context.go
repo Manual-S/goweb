@@ -59,7 +59,7 @@ func (c *Context) Done() <-chan struct{} {
 	return nil
 }
 
-func (c *Context) Err(ctx *Context) error {
+func (c *Context) Err() error {
 	return nil
 }
 
