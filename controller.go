@@ -48,3 +48,28 @@ func FooControllerHandler(c *framework.Context) error {
 
 	return nil
 }
+
+func SubjectDelController(c *framework.Context) error {
+	id := c.QueryInt("id", 0)
+	c.Json(http.StatusOK, id)
+	return nil
+}
+
+func SubjectUpdateController(c *framework.Context) error {
+	c.Json(http.StatusOK, "ok")
+	return nil
+}
+
+func SubjectGetController(c *framework.Context) error {
+	id := c.FormInt("id", -1)
+	values := c.GetRequest().URL.Query()
+	params := values["id"]
+	fmt.Printf("params = %v\n", params)
+	c.Json(http.StatusOK, id)
+	return nil
+}
+
+func SubjectListController(c *framework.Context) error {
+	c.Json(http.StatusOK, "ok")
+	return nil
+}

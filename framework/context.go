@@ -115,6 +115,22 @@ func (c *Context) QueryAll() map[string][]string {
 	return map[string][]string{}
 }
 
+func (c *Context) FormInt(key string, def int) int {
+	mapRes := c.FormAll()
+	if valus, ok := mapRes[key]; ok {
+		if len(valus) > 0 {
+			res, err := strconv.Atoi(valus[len(valus)-1])
+			if err != nil {
+				return def
+			}
+
+			return res
+		}
+	}
+
+	return def
+}
+
 func (c *Context) FormAll() map[string][]string {
 	if c.request != nil {
 		return map[string][]string(c.request.PostForm)

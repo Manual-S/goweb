@@ -23,6 +23,9 @@ func NewCore() *Core {
 
 // ServeHTTP 自定义的ServeHTTP
 func (c *Core) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+
+	log.Printf("path = %v", r.URL.Path)
+
 	// 处理路由
 	ctx := NewContext(r, w)
 	router := c.FindRouterByRequest(r)
@@ -52,17 +55,21 @@ func (c *Core) Post(path string, handler ControllerHandler) {
 }
 
 func (c *Core) Delete(path string, handler ControllerHandler) {
-	err := c.router["POST"].AddRouter(path, handler)
+	err := c.router["DELETE"].AddRouter(path, handler)
 	if err != nil {
 		log.Fatalf("AddRouter error Delete:%v", err)
 	}
 }
 
 func (c *Core) Put(path string, handler ControllerHandler) {
-	err := c.router["POST"].AddRouter(path, handler)
+	err := c.router["PUT"].AddRouter(path, handler)
 	if err != nil {
 		log.Fatalf("AddRouter error Put:%v", err)
 	}
+}
+
+func (c *Core) Group(prefix string) IGroup {
+	return NewGroup(c, prefix)
 }
 
 func (c *Core) FindRouterByRequest(r *http.Request) ControllerHandler {
@@ -72,7 +79,7 @@ func (c *Core) FindRouterByRequest(r *http.Request) ControllerHandler {
 	methodHandlers, ok := c.router[method]
 	if !ok {
 		// 找不到对应的路由
-		log.Printf("FindRouterByRequest not find router")
+		log.Printf("FindRouterByRequest error not find router")
 		return nil
 	}
 
