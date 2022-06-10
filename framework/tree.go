@@ -2,6 +2,7 @@
 package framework
 
 import (
+	"errors"
 	"log"
 	"strings"
 )
@@ -13,8 +14,23 @@ type node struct {
 	child   []*node           // 当前节点的子节点
 }
 
+func NewNode() *node {
+	return &node{
+		isLast:  false,
+		segment: "",
+		child:   []*node{},
+	}
+}
+
 type Tree struct {
 	root *node
+}
+
+func NewTree() *Tree {
+	root := NewNode()
+	return &Tree{
+		root: root,
+	}
 }
 
 // isGeneralSegment 是否是一个通用的前缀
@@ -79,14 +95,54 @@ func (n *node) matchNode(uri string) *node {
 	return nil
 }
 
-func NewTree() *Tree {
-	root := node{}
-	return &Tree{
-		root: &root,
-	}
-}
-
+// AddRouter 向路由树中增加一个路由
 func (t *Tree) AddRouter(uri string, handler ControllerHandler) error {
+	root := t.root
+
+	if root.matchNode(uri) != nil {
+		// 说明当前路由树中已经添加过该路由
+		return errors.New("router exist")
+	}
+
+	// 将uri按照/进行分割
+	segments := strings.Split(uri, "/")
+
+	for index, segment := range segments {
+		isLast := false
+
+		if index == len(segments)-1 {
+			isLast = true
+		}
+
+		var objNode *node
+		childNodes := root.filterChildNodes(segment)
+
+		if len(childNodes) > 0 {
+			// 说明有匹配的子节点
+			for _, v := range childNodes {
+				if v.segment == segment {
+					objNode = v
+					break
+				}
+			}
+		}
+
+		if objNode == nil {
+			// 没有匹配的子节点 需要创建新的结点
+			nNode := NewNode()
+			nNode.segment = segment
+			if isLast {
+				// 是叶子结点
+				nNode.isLast = isLast
+				nNode.handler = handler
+			}
+			root.child = append(root.child, nNode)
+			objNode = nNode
+		}
+
+		root = objNode
+	}
+
 	return nil
 }
 

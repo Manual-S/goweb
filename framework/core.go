@@ -10,7 +10,7 @@ type Core struct {
 }
 
 func NewCore() *Core {
-	router := make(map[string]*Tree)
+	router := map[string]*Tree{}
 	router["GET"] = NewTree() // gin框架采用的是slice 这里采用的是map结构
 	router["POST"] = NewTree()
 	router["DELETE"] = NewTree()
@@ -24,7 +24,17 @@ func NewCore() *Core {
 // ServeHTTP 自定义的ServeHTTP
 func (c *Core) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// 处理路由
-
+	ctx := NewContext(r, w)
+	router := c.FindRouterByRequest(r)
+	if router == nil {
+		ctx.Json(http.StatusOK, "not find router")
+		return
+	}
+	err := router(ctx)
+	if err != nil {
+		ctx.Json(http.StatusInternalServerError, "inner error")
+		return
+	}
 }
 
 func (c *Core) Get(path string, handler ControllerHandler) {

@@ -15,7 +15,6 @@ type Context struct {
 	responseWriter http.ResponseWriter
 	writeMux       *sync.Mutex
 	hasTimeout     bool // 是否超时标记位
-
 }
 
 // NewContext 构造函数
@@ -23,6 +22,7 @@ func NewContext(r *http.Request, w http.ResponseWriter) *Context {
 	return &Context{
 		request:        r,
 		responseWriter: w,
+		writeMux:       &sync.Mutex{},
 	}
 }
 

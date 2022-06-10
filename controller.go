@@ -18,7 +18,7 @@ func FooControllerHandler(c *framework.Context) error {
 	defer cancel()
 
 	go func() {
-		// 距离的业务逻辑
+		// 具体的义务逻辑
 		defer func() {
 			if p := recover(); p != nil {
 				panicChan <- p
