@@ -1,28 +1,56 @@
 package framework
 
 import (
+	"log"
 	"net/http"
 )
 
 type Core struct {
-	router map[string]ControllerHandler
+	router map[string]*Tree
 }
 
 func NewCore() *Core {
+	router := make(map[string]*Tree)
+	router["GET"] = NewTree() // gin框架采用的是slice 这里采用的是map结构
+	router["POST"] = NewTree()
+	router["DELETE"] = NewTree()
+	router["PUT"] = NewTree()
+
 	return &Core{
-		router: map[string]ControllerHandler{},
+		router: router,
 	}
 }
 
 // ServeHTTP 自定义的ServeHTTP
 func (c *Core) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// 处理路由
-	ctx := NewContext(r, w)
-	handler := c.router["foo"]
 
-	handler(ctx)
 }
 
 func (c *Core) Get(path string, handler ControllerHandler) {
-	c.router[path] = handler
+	err := c.router["GET"].AddRouter(path, handler)
+	if err != nil {
+		log.Fatalf("AddRouter error GET:%v", err)
+	}
+}
+
+func (c *Core) Post(path string, handler ControllerHandler) {
+	err := c.router["POST"].AddRouter(path, handler)
+	if err != nil {
+		log.Fatalf("AddRouter error POST:%v", err)
+	}
+}
+
+func (c *Core) Delete(path string, handler ControllerHandler) {
+	err := c.router["POST"].AddRouter(path, handler)
+	if err != nil {
+		log.Fatalf("AddRouter error Delete:%v", err)
+	}
+}
+
+func (c *Core) Put(path string, handler ControllerHandler) {
+	err := c.router["POST"].AddRouter(path, handler)
+	if err != nil {
+		log.Fatalf("AddRouter error Put:%v", err)
+	}
 }

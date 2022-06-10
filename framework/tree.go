@@ -19,9 +19,28 @@ func isGeneralSegment(segment string) bool {
 	return strings.HasPrefix(segment, ":")
 }
 
-func (n *node)
+//filterChildNodes 过滤下一层满足segment规则的子节点
+func (n *node) filterChildNodes(segment string) []*node {
+	return nil
+}
 
-// matchNode 返回与uri想匹配的树节点
+// matchNode 返回与uri相匹配的树节点
 func (n *node) matchNode(uri string) *node {
+	return nil
+}
+
+func NewTree() *Tree {
+	root := node{}
+	return &Tree{
+		root: &root,
+	}
+}
+
+func (t *Tree) AddRouter(uri string, handler ControllerHandler) error {
+	return nil
+}
+
+// FindHandler 根据uri找到对应的处理函数
+func (t *Tree) FindHandler(uri string) ControllerHandler {
 	return nil
 }
