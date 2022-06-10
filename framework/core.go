@@ -54,3 +54,17 @@ func (c *Core) Put(path string, handler ControllerHandler) {
 		log.Fatalf("AddRouter error Put:%v", err)
 	}
 }
+
+func (c *Core) FindRouterByRequest(r *http.Request) ControllerHandler {
+	path := r.URL.Path
+	method := r.Method
+
+	methodHandlers, ok := c.router[method]
+	if !ok {
+		// 找不到对应的路由
+		log.Printf("FindRouterByRequest not find router")
+		return nil
+	}
+
+	return methodHandlers.FindHandler(path)
+}
