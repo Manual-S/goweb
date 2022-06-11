@@ -190,19 +190,19 @@ func (c *Context) Host() string {
 // ClientIp 获取ip地址
 // todo 获取ip这里有需要http知识
 // 参考资料 https://www.cnblogs.com/GaiHeiluKamei/p/13731791.html
-func (ctx *Context) ClientIp() string {
-	ip := ctx.request.Header.Get("X-Real-IP")
+func (c *Context) ClientIp() string {
+	ip := c.request.Header.Get("X-Real-IP")
 	if net.ParseIP(ip) != nil {
 		return ip
 	}
-	ip = ctx.request.Header.Get("X-Forward-For")
+	ip = c.request.Header.Get("X-Forward-For")
 	for _, i := range strings.Split(ip, ",") {
 		if net.ParseIP(i) != nil {
 			return i
 		}
 	}
 	if ip == "" {
-		ip = ctx.request.RemoteAddr
+		ip = c.request.RemoteAddr
 	}
 	return ip
 }
