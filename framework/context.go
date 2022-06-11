@@ -2,7 +2,6 @@ package framework
 
 import (
 	"context"
-	"encoding/json"
 	"net/http"
 	"sync"
 	"time"
@@ -75,35 +74,6 @@ func (c *Context) Deadline() (deadline time.Time, ok bool) {
 }
 
 func (c *Context) Value(key interface{}) interface{} {
-	return nil
-}
-
-// response相关函数
-
-// Json 返回json结构
-func (c *Context) Json(status int, obj interface{}) error {
-	if c.HasTimeout() {
-		// 已经超时了
-		return nil
-	}
-	c.responseWriter.Header().Set("Content-Type", "application/json")
-	c.responseWriter.WriteHeader(status)
-
-	data, err := json.Marshal(obj)
-	if err != nil {
-		c.responseWriter.WriteHeader(http.StatusInternalServerError)
-		return err
-	}
-
-	c.responseWriter.Write(data)
-	return nil
-}
-
-func (c *Context) HTML(status int, obj interface{}, template string) error {
-	return nil
-}
-
-func (c *Context) Text(status int, obj interface{}) error {
 	return nil
 }
 

@@ -1,6 +1,11 @@
 package framework
 
 import (
+	"bytes"
+	"encoding/json"
+	"errors"
+	"io/ioutil"
+	"log"
 	"mime/multipart"
 	"net"
 	"strconv"
@@ -114,6 +119,7 @@ func (c *Context) ParamString(key string, def string) (string, bool) {
 }
 func (c *Context) Param(key string) interface{} {
 	if c.params == nil {
+		log.Printf("c.params is nil\n")
 		return nil
 	}
 
@@ -176,6 +182,20 @@ func (c *Context) FormAll() map[string][]string {
 
 // BindJson json body
 func (c *Context) BindJson(obj interface{}) error {
+	if c.request != nil {
+		body, err := ioutil.ReadAll(c.request.Body)
+		if err != nil {
+			return err
+		}
+		c.request.Body = ioutil.NopCloser(bytes.NewBuffer(body))
+		err = json.Unmarshal(body, obj)
+		if err != nil {
+			return err
+		}
+		return nil
+	} else {
+		return errors.New("ctx.request empty")
+	}
 	return nil
 }
 

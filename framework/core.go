@@ -29,7 +29,7 @@ func (c *Core) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	ctx := NewContext(r, w)
 	nodes := c.FindRouterByRequest(r)
 	if nodes == nil {
-		ctx.Json(http.StatusOK, "not find router")
+		ctx.SetOkStatus()
 		return
 	}
 
@@ -40,7 +40,7 @@ func (c *Core) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	err := ctx.Next()
 	if err != nil {
-		ctx.Json(http.StatusInternalServerError, "inter error")
+		ctx.SetStatus(http.StatusInternalServerError)
 		return
 	}
 }

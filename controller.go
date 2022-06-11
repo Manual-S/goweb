@@ -3,12 +3,11 @@ package main
 import (
 	"fmt"
 	"goweb/framework"
-	"net/http"
 )
 
 func FooControllerHandler(c *framework.Context) error {
 
-	c.Json(http.StatusOK, "FooControllerHandler")
+	c.SetOkStatus().Json("ok")
 	return nil
 	//finish := make(chan struct{}, 1)
 	//panicChan := make(chan interface{}, 1)
@@ -50,13 +49,12 @@ func FooControllerHandler(c *framework.Context) error {
 }
 
 func SubjectDelController(c *framework.Context) error {
-	id, _ := c.QueryInt("id", 0)
-	c.Json(http.StatusOK, id)
+	c.SetOkStatus().Jsonp("ok")
 	return nil
 }
 
 func SubjectUpdateController(c *framework.Context) error {
-	c.Json(http.StatusOK, "ok")
+	c.SetOkStatus().Jsonp("ok")
 	return nil
 }
 
@@ -65,16 +63,10 @@ func SubjectGetController(c *framework.Context) error {
 	values := c.GetRequest().URL.Query()
 	params := values["id"]
 	fmt.Printf("params = %v\n", params)
-	c.Json(http.StatusOK, id)
+	c.SetOkStatus().Json(id)
 	return nil
 }
 
 func SubjectListController(c *framework.Context) error {
-	id := c.Param("id")
-	values := c.GetRequest().URL.Query()
-	params := values["id"]
-	fmt.Printf("params = %v\n", params)
-	c.Json(http.StatusOK, id)
-	return nil
 	return nil
 }
