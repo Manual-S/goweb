@@ -6,7 +6,8 @@ import (
 )
 
 type Core struct {
-	router map[string]*Tree
+	router     map[string]*Tree
+	middleware []ControllerHandler
 }
 
 func NewCore() *Core {
@@ -24,45 +25,47 @@ func NewCore() *Core {
 // ServeHTTP 自定义的ServeHTTP
 func (c *Core) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
-	log.Printf("path = %v", r.URL.Path)
-
 	// 处理路由
 	ctx := NewContext(r, w)
-	router := c.FindRouterByRequest(r)
-	if router == nil {
+	handlers := c.FindRouterByRequest(r)
+	if handlers == nil {
 		ctx.Json(http.StatusOK, "not find router")
 		return
 	}
-	err := router(ctx)
+
+	ctx.SetHandlers(handlers)
+
+	err := ctx.Next()
 	if err != nil {
-		ctx.Json(http.StatusInternalServerError, "inner error")
+		ctx.Json(http.StatusInternalServerError, "inter error")
 		return
 	}
 }
 
-func (c *Core) Get(path string, handler ControllerHandler) {
-	err := c.router["GET"].AddRouter(path, handler)
+func (c *Core) Get(path string, handler ...ControllerHandler) {
+	allHandlers := append(c.middleware, handler...)
+	err := c.router["GET"].AddRouter(path, allHandlers...)
 	if err != nil {
 		log.Fatalf("AddRouter error GET:%v", err)
 	}
 }
 
-func (c *Core) Post(path string, handler ControllerHandler) {
-	err := c.router["POST"].AddRouter(path, handler)
+func (c *Core) Post(path string, handler ...ControllerHandler) {
+	err := c.router["POST"].AddRouter(path, handler...)
 	if err != nil {
 		log.Fatalf("AddRouter error POST:%v", err)
 	}
 }
 
-func (c *Core) Delete(path string, handler ControllerHandler) {
-	err := c.router["DELETE"].AddRouter(path, handler)
+func (c *Core) Delete(path string, handler ...ControllerHandler) {
+	err := c.router["DELETE"].AddRouter(path, handler...)
 	if err != nil {
 		log.Fatalf("AddRouter error Delete:%v", err)
 	}
 }
 
-func (c *Core) Put(path string, handler ControllerHandler) {
-	err := c.router["PUT"].AddRouter(path, handler)
+func (c *Core) Put(path string, handler ...ControllerHandler) {
+	err := c.router["PUT"].AddRouter(path, handler...)
 	if err != nil {
 		log.Fatalf("AddRouter error Put:%v", err)
 	}
@@ -72,7 +75,7 @@ func (c *Core) Group(prefix string) IGroup {
 	return NewGroup(c, prefix)
 }
 
-func (c *Core) FindRouterByRequest(r *http.Request) ControllerHandler {
+func (c *Core) FindRouterByRequest(r *http.Request) []ControllerHandler {
 	path := r.URL.Path
 	method := r.Method
 
@@ -84,4 +87,8 @@ func (c *Core) FindRouterByRequest(r *http.Request) ControllerHandler {
 	}
 
 	return methodHandlers.FindHandler(path)
+}
+
+func (c *Core) Use(middlewares ...ControllerHandler) {
+	c.middleware = append(c.middleware, middlewares...)
 }

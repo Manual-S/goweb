@@ -15,6 +15,8 @@ type Context struct {
 	responseWriter http.ResponseWriter
 	writeMux       *sync.Mutex
 	hasTimeout     bool // 是否超时标记位
+	handlers       []ControllerHandler
+	index          int // 表示执行到了那个函数
 }
 
 // NewContext 构造函数
@@ -23,6 +25,7 @@ func NewContext(r *http.Request, w http.ResponseWriter) *Context {
 		request:        r,
 		responseWriter: w,
 		writeMux:       &sync.Mutex{},
+		index:          -1,
 	}
 }
 
@@ -166,4 +169,21 @@ func (c *Context) HTML(status int, obj interface{}, template string) error {
 
 func (c *Context) Text(status int, obj interface{}) error {
 	return nil
+}
+
+// Next 实现中间件的链路调用
+func (c *Context) Next() error {
+	c.index++
+	if c.index < len(c.handlers) {
+		err := c.handlers[c.index](c)
+		if err != nil {
+			return err
+		}
+		// 注意 这里千万不要写c.index++
+	}
+	return nil
+}
+
+func (c *Context) SetHandlers(handlers []ControllerHandler) {
+	c.handlers = append(c.handlers, handlers...)
 }

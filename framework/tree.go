@@ -8,10 +8,10 @@ import (
 )
 
 type node struct {
-	isLast  bool              // 当前的节点是不是最后一个节点
-	segment string            // 根据url中的字符串进行分割的segment
-	handler ControllerHandler // 自定义的路由处理函数
-	child   []*node           // 当前节点的子节点
+	isLast  bool                // 当前的节点是不是最后一个节点
+	segment string              // 根据url中的字符串进行分割的segment
+	handler []ControllerHandler // 中间件+控制器
+	child   []*node             // 当前节点的子节点
 }
 
 func NewNode() *node {
@@ -96,7 +96,7 @@ func (n *node) matchNode(uri string) *node {
 }
 
 // AddRouter 向路由树中增加一个路由
-func (t *Tree) AddRouter(uri string, handler ControllerHandler) error {
+func (t *Tree) AddRouter(uri string, handler ...ControllerHandler) error {
 	root := t.root
 
 	if root.matchNode(uri) != nil {
@@ -147,7 +147,7 @@ func (t *Tree) AddRouter(uri string, handler ControllerHandler) error {
 }
 
 // FindHandler 根据uri找到对应的处理函数
-func (t *Tree) FindHandler(uri string) ControllerHandler {
+func (t *Tree) FindHandler(uri string) []ControllerHandler {
 	node := t.root.matchNode(uri)
 	if node == nil {
 		log.Printf("not FindHandler")
