@@ -50,7 +50,7 @@ func FooControllerHandler(c *framework.Context) error {
 }
 
 func SubjectDelController(c *framework.Context) error {
-	id := c.QueryInt("id", 0)
+	id, _ := c.QueryInt("id", 0)
 	c.Json(http.StatusOK, id)
 	return nil
 }
@@ -61,7 +61,7 @@ func SubjectUpdateController(c *framework.Context) error {
 }
 
 func SubjectGetController(c *framework.Context) error {
-	id := c.FormInt("id", -1)
+	id := c.Param("id")
 	values := c.GetRequest().URL.Query()
 	params := values["id"]
 	fmt.Printf("params = %v\n", params)
@@ -70,6 +70,11 @@ func SubjectGetController(c *framework.Context) error {
 }
 
 func SubjectListController(c *framework.Context) error {
-	c.Json(http.StatusOK, "SubjectListController")
+	id := c.Param("id")
+	values := c.GetRequest().URL.Query()
+	params := values["id"]
+	fmt.Printf("params = %v\n", params)
+	c.Json(http.StatusOK, id)
+	return nil
 	return nil
 }

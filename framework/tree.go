@@ -12,6 +12,7 @@ type node struct {
 	segment string              // 根据url中的字符串进行分割的segment
 	handler []ControllerHandler // 中间件+控制器
 	child   []*node             // 当前节点的子节点
+	parent  *node               // 指向父节点
 }
 
 func NewNode() *node {
@@ -95,6 +96,28 @@ func (n *node) matchNode(uri string) *node {
 	return nil
 }
 
+func (n *node) parseParamsFromEndNode(uri string) map[string]string {
+	ret := make(map[string]string)
+	segments := strings.Split(uri, "/")
+	cur := n
+	cnt := len(segments)
+
+	for i := cnt - 1; i >= 0; i-- {
+		if cur.segment == "" {
+			break
+		}
+
+		if isGeneralSegment(cur.segment) {
+			// 是一个通配符
+			// cur.segment 是一个:id的结构
+			ret[cur.segment[1:]] = segments[i]
+		}
+		cur = cur.parent
+	}
+
+	return ret
+}
+
 // AddRouter 向路由树中增加一个路由
 func (t *Tree) AddRouter(uri string, handler ...ControllerHandler) error {
 	root := t.root
@@ -136,7 +159,11 @@ func (t *Tree) AddRouter(uri string, handler ...ControllerHandler) error {
 				nNode.isLast = isLast
 				nNode.handler = handler
 			}
+
 			root.child = append(root.child, nNode)
+
+			nNode.parent = root
+
 			objNode = nNode
 		}
 
@@ -147,12 +174,12 @@ func (t *Tree) AddRouter(uri string, handler ...ControllerHandler) error {
 }
 
 // FindHandler 根据uri找到对应的处理函数
-func (t *Tree) FindHandler(uri string) []ControllerHandler {
+func (t *Tree) FindHandler(uri string) *node {
 	node := t.root.matchNode(uri)
 	if node == nil {
 		log.Printf("not FindHandler")
 		return nil
 	}
 
-	return node.handler
+	return node
 }

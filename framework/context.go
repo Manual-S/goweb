@@ -19,6 +19,7 @@ type Context struct {
 	hasTimeout     bool // 是否超时标记位
 	handlers       []ControllerHandler
 	index          int // 表示执行到了那个函数
+	params         map[string]string
 }
 
 // NewContext 构造函数
@@ -121,4 +122,8 @@ func (c *Context) Next() error {
 
 func (c *Context) SetHandlers(handlers []ControllerHandler) {
 	c.handlers = append(c.handlers, handlers...)
+}
+
+func (c *Context) SetParams(hash map[string]string) {
+	c.params = hash
 }

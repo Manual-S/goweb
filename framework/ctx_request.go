@@ -90,7 +90,12 @@ func (c *Context) QueryAll() map[string][]string {
 // 形如 /book/:id
 
 func (c *Context) ParamInt(key string, def int) (int, bool) {
-	return 0, false
+	value := c.Param(key)
+	if value != nil {
+		return cast.ToInt(value), true
+	}
+
+	return def, false
 }
 func (c *Context) ParamInt64(key string, def int64) (int64, bool) {
 	return 0, false
@@ -108,7 +113,16 @@ func (c *Context) ParamString(key string, def string) (string, bool) {
 	return "", false
 }
 func (c *Context) Param(key string) interface{} {
-	return nil
+	if c.params == nil {
+		return nil
+	}
+
+	value, ok := c.params[key]
+	if !ok {
+		return nil
+	}
+
+	return value
 }
 
 // form 表单中带的参数

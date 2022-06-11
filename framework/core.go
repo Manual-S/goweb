@@ -27,13 +27,16 @@ func (c *Core) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	// 处理路由
 	ctx := NewContext(r, w)
-	handlers := c.FindRouterByRequest(r)
-	if handlers == nil {
+	nodes := c.FindRouterByRequest(r)
+	if nodes == nil {
 		ctx.Json(http.StatusOK, "not find router")
 		return
 	}
 
-	ctx.SetHandlers(handlers)
+	params := nodes.parseParamsFromEndNode(r.URL.Path)
+	ctx.SetParams(params)
+
+	ctx.SetHandlers(nodes.handler)
 
 	err := ctx.Next()
 	if err != nil {
@@ -87,7 +90,7 @@ func (c *Core) Group(prefix string) IGroup {
 	return NewGroup(c, prefix)
 }
 
-func (c *Core) FindRouterByRequest(r *http.Request) []ControllerHandler {
+func (c *Core) FindRouterByRequest(r *http.Request) *node {
 	path := r.URL.Path
 	method := r.Method
 
