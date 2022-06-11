@@ -4,12 +4,14 @@ import (
 	"context"
 	"encoding/json"
 	"net/http"
-	"strconv"
 	"sync"
 	"time"
 )
 
 type Context struct {
+	IRequest
+	IResponse
+
 	ctx            context.Context
 	request        *http.Request
 	responseWriter http.ResponseWriter
@@ -73,73 +75,6 @@ func (c *Context) Deadline() (deadline time.Time, ok bool) {
 
 func (c *Context) Value(key interface{}) interface{} {
 	return nil
-}
-
-// request相关函数
-
-func (c *Context) QueryInt(key string, def int) int {
-	mapRes := c.QueryAll()
-	if valus, ok := mapRes[key]; ok {
-		if len(valus) > 0 {
-			res, err := strconv.Atoi(valus[len(valus)-1])
-			if err != nil {
-				return def
-			}
-
-			return res
-		}
-	}
-
-	return def
-}
-
-// QueryString 查询请求中的string参数
-func (c *Context) QueryString(key string, def string) string {
-	mapRes := c.QueryAll()
-	if valus, ok := mapRes[key]; ok {
-		if len(valus) > 0 {
-			res := valus[len(valus)-1]
-			return res
-		}
-	}
-
-	return def
-}
-
-func (c *Context) QueryArray(key string, def []string) []string {
-	return nil
-}
-
-func (c *Context) QueryAll() map[string][]string {
-	if c.request != nil {
-		return map[string][]string(c.request.URL.Query())
-	}
-
-	return map[string][]string{}
-}
-
-func (c *Context) FormInt(key string, def int) int {
-	mapRes := c.FormAll()
-	if valus, ok := mapRes[key]; ok {
-		if len(valus) > 0 {
-			res, err := strconv.Atoi(valus[len(valus)-1])
-			if err != nil {
-				return def
-			}
-
-			return res
-		}
-	}
-
-	return def
-}
-
-func (c *Context) FormAll() map[string][]string {
-	if c.request != nil {
-		return map[string][]string(c.request.PostForm)
-	}
-
-	return map[string][]string{}
 }
 
 // response相关函数

@@ -7,6 +7,7 @@ import (
 )
 
 func FooControllerHandler(c *framework.Context) error {
+
 	c.Json(http.StatusOK, "FooControllerHandler")
 	return nil
 	//finish := make(chan struct{}, 1)
