@@ -43,7 +43,10 @@ func (c *Core) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *Core) Get(path string, handler ...ControllerHandler) {
-	allHandlers := append(c.middleware, handler...)
+	// 原文这里代码有bug 已修改
+	tempHandler := append(c.middleware, handler...)
+	allHandlers := make([]ControllerHandler, len(c.middleware)+len(handler))
+	copy(allHandlers, tempHandler)
 	err := c.router["GET"].AddRouter(path, allHandlers...)
 	if err != nil {
 		log.Fatalf("AddRouter error GET:%v", err)
@@ -51,21 +54,30 @@ func (c *Core) Get(path string, handler ...ControllerHandler) {
 }
 
 func (c *Core) Post(path string, handler ...ControllerHandler) {
-	err := c.router["POST"].AddRouter(path, handler...)
+	tempHandler := append(c.middleware, handler...)
+	allHandlers := make([]ControllerHandler, len(c.middleware)+len(handler))
+	copy(allHandlers, tempHandler)
+	err := c.router["POST"].AddRouter(path, allHandlers...)
 	if err != nil {
 		log.Fatalf("AddRouter error POST:%v", err)
 	}
 }
 
 func (c *Core) Delete(path string, handler ...ControllerHandler) {
-	err := c.router["DELETE"].AddRouter(path, handler...)
+	tempHandler := append(c.middleware, handler...)
+	allHandlers := make([]ControllerHandler, len(c.middleware)+len(handler))
+	copy(allHandlers, tempHandler)
+	err := c.router["DELETE"].AddRouter(path, allHandlers...)
 	if err != nil {
 		log.Fatalf("AddRouter error Delete:%v", err)
 	}
 }
 
 func (c *Core) Put(path string, handler ...ControllerHandler) {
-	err := c.router["PUT"].AddRouter(path, handler...)
+	tempHandler := append(c.middleware, handler...)
+	allHandlers := make([]ControllerHandler, len(c.middleware)+len(handler))
+	copy(allHandlers, tempHandler)
+	err := c.router["PUT"].AddRouter(path, allHandlers...)
 	if err != nil {
 		log.Fatalf("AddRouter error Put:%v", err)
 	}
