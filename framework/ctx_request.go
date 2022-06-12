@@ -243,10 +243,15 @@ func (c *Context) ClientIp() string {
 
 // Headers header
 func (c *Context) Headers() map[string][]string {
-	return nil
+	return c.request.Header
 }
 func (c *Context) Header(key string) (string, bool) {
-	return "", false
+	valus := c.request.Header.Values(key)
+	if valus == nil || len(valus) == 0 {
+		return "", false
+	}
+
+	return valus[0], true
 }
 
 // Cookies cookie
