@@ -3,10 +3,11 @@ package main
 import (
 	"fmt"
 	"goweb/framework"
+	"time"
 )
 
 func FooControllerHandler(c *framework.Context) error {
-
+	time.Sleep(5 * time.Second)
 	c.SetOkStatus().Json("ok")
 	return nil
 	//finish := make(chan struct{}, 1)
