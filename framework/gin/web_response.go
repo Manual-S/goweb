@@ -3,6 +3,7 @@ package gin
 import (
 	"encoding/json"
 	"log"
+	"net/http"
 )
 
 // IResponse IResponse代表返回方法
@@ -38,6 +39,12 @@ type IResponse interface {
 	ISetOkStatus() IResponse
 }
 
+// ISetHeader header
+func (ctx *Context) ISetHeader(key string, val string) IResponse {
+	ctx.Writer.Header().Add(key, val)
+	return ctx
+}
+
 func (ctx *Context) IJson(obj interface{}) IResponse {
 	data, err := json.Marshal(obj)
 	if err != nil {
@@ -46,5 +53,10 @@ func (ctx *Context) IJson(obj interface{}) IResponse {
 	}
 	ctx.ISetHeader("Content-Type", "application/json")
 	ctx.Writer.Write(data)
+	return ctx
+}
+
+func (ctx *Context) ISetOkStatus() IResponse {
+	ctx.Writer.WriteHeader(http.StatusOK)
 	return ctx
 }
