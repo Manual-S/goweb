@@ -23,6 +23,14 @@ type WebContainer struct {
 	lock     sync.RWMutex
 }
 
+func NewContainer() Container {
+	return &WebContainer{
+		provider: map[string]ServiceProvider{},
+		instance: map[string]interface{}{},
+		lock:     sync.RWMutex{},
+	}
+}
+
 //Bind 根据名字绑定一个服务提供者
 func (w *WebContainer) Bind(provider ServiceProvider) error {
 	w.lock.Lock()

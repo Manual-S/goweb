@@ -6,6 +6,7 @@ package gin
 
 import (
 	"fmt"
+	"goweb/framework"
 	"html/template"
 	"net"
 	"net/http"
@@ -69,6 +70,8 @@ const (
 // Create an instance of Engine, by using New() or Default()
 type Engine struct {
 	RouterGroup
+
+	container framework.Container
 
 	// Enables automatic redirection if the current route can't be matched but a
 	// handler for the path with (without) the trailing slash exists.
@@ -184,6 +187,7 @@ func New() *Engine {
 		secureJSONPrefix: "while(1);",
 		trustedProxies:   []string{"0.0.0.0/0"},
 		trustedCIDRs:     defaultTrustedCIDRs,
+		container:        framework.NewContainer(),
 	}
 	engine.RouterGroup.engine = engine
 	engine.pool.New = func() interface{} {
@@ -207,6 +211,7 @@ func (engine *Engine) allocateContext() *Context {
 		engine:       engine,
 		params:       &v,
 		skippedNodes: &skippedNodes,
+		container:    engine.container,
 	}
 }
 

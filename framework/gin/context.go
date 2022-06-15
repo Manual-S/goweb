@@ -7,6 +7,7 @@ package gin
 import (
 	"errors"
 	"fmt"
+	"goweb/framework"
 	"io"
 	"io/ioutil"
 	"log"
@@ -48,6 +49,8 @@ const abortIndex int8 = math.MaxInt8 / 2
 type Context struct {
 	IRequest
 	IResponse
+
+	container framework.Container
 
 	writermem responseWriter
 	Request   *http.Request
