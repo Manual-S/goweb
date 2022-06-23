@@ -8,7 +8,7 @@ type DemoServiceProvider struct {
 
 // Name 获取服务提供者的名字
 func (d *DemoServiceProvider) Name() string {
-	return key
+	return Key
 }
 
 // IsDefer 决定是否要延迟初始化

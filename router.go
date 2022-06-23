@@ -1,7 +1,9 @@
 package main
 
-import "goweb/framework/gin"
+import (
+	"goweb/framework/gin"
+)
 
-func Router(eng *gin.Engine) {
-	eng.GET("/hello", HelloFunc)
+func registerRouter(core *gin.Engine) {
+	core.GET("subject/list/all", SubjectListController)
 }

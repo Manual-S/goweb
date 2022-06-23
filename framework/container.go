@@ -56,8 +56,8 @@ func (w *WebContainer) IsBind(key string) bool {
 }
 
 func (w *WebContainer) findServiceProvider(key string) ServiceProvider {
-	w.lock.RLock()
-	defer w.lock.Unlock()
+	//w.lock.RLock()
+	//defer w.lock.Unlock()
 	provider, ok := w.provider[key]
 	if ok {
 		return provider
