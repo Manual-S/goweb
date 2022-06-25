@@ -2,6 +2,7 @@ package main
 
 import (
 	"goweb/framework/gin"
+	"goweb/framework/provider/app"
 	"goweb/provider/demo"
 	"net/http"
 )
@@ -9,6 +10,7 @@ import (
 func main() {
 	core := gin.New()
 	core.Bind(&demo.DemoServiceProvider{})
+	core.Bind(&app.DirectoryProvider{})
 	// 注册路由
 	registerRouter(core)
 
