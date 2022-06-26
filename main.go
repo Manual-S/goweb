@@ -1,23 +1,23 @@
 package main
 
 import (
-	"goweb/framework/gin"
+	"fmt"
+	"goweb/app/console"
+	"goweb/app/http"
+	"goweb/framework"
 	"goweb/framework/provider/app"
-	"goweb/provider/demo"
-	"net/http"
+	"goweb/framework/provider/kernel"
 )
 
 func main() {
-	core := gin.New()
-	core.Bind(&demo.DemoServiceProvider{})
-	core.Bind(&app.DirectoryProvider{})
-	// 注册路由
-	registerRouter(core)
+	container := framework.NewContainer()
+	container.Bind(&app.DirectoryProvider{}) // 绑定目录结构服务
 
-	server := &http.Server{
-		Handler: core,
-		Addr:    ":8080", // 监听本机的8080端口
+	// 绑定一个路由服务
+	if engine, err := http.NewHttpEngine(); err == nil {
+		container.Bind(&kernel.KernelProvider{HttpEngine: engine})
+		fmt.Printf("bind engine succ\n")
 	}
 
-	server.ListenAndServe()
+	console.RunCommand(container)
 }

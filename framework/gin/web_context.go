@@ -4,6 +4,10 @@ import "goweb/framework"
 
 // 绑定
 
+func (engine *Engine) SetContainer(c framework.Container) {
+	engine.container = c
+}
+
 func (engine *Engine) Bind(provider framework.ServiceProvider) error {
 	return engine.container.Bind(provider)
 }

@@ -2,8 +2,8 @@
 package main
 
 import (
+	"goweb/app/provider/demo"
 	"goweb/framework/gin"
-	"goweb/provider/demo"
 )
 
 func SubjectListController(c *gin.Context) {
