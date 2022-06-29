@@ -3,9 +3,11 @@ package console
 import (
 	"errors"
 	"fmt"
+	"goweb/app/console/command/demo"
+	"goweb/framework/command"
+
 	"goweb/framework"
 	"goweb/framework/cobra"
-	"goweb/framework/command"
 )
 
 // RunCommand 初始化根command并且执行
@@ -30,5 +32,13 @@ func RunCommand(c framework.Container) error {
 	// 为rootCmd增加框架提供的命令
 	command.AddKernelCommands(rootCmd)
 
+	// 添加自定义的命令
+	AddNormalCmd(rootCmd)
+
 	return rootCmd.Execute()
+}
+
+// AddNormalCmd 绑定业务自定义的命令
+func AddNormalCmd(rootCmd *cobra.Command) {
+	rootCmd.AddCommand(demo.InitFoo())
 }
