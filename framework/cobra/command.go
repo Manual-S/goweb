@@ -19,6 +19,7 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"github.com/robfig/cron"
 	"goweb/framework"
 	"io"
 	"os"
@@ -37,6 +38,12 @@ type FParseErrWhitelist flag.ParseErrorsWhitelist
 // you to define the usage and description as part of your command
 // definition to ensure usability.
 type Command struct {
+	// Command支持cron 只在RootCmd中有这个值
+	CronClient *cron.Cron
+
+	//
+	CronSpecs []CronSpec
+
 	// 容器
 	container framework.Container
 	// Use is the one-line usage message.
@@ -1456,6 +1463,10 @@ func (c *Command) HasAvailableSubCommands() bool {
 // HasParent determines if the command is a child command.
 func (c *Command) HasParent() bool {
 	return c.parent != nil
+}
+
+func (c *Command) SetParentNull() {
+	c.parent = nil
 }
 
 // GlobalNormalizationFunc returns the global normalization function or nil if it doesn't exist.
