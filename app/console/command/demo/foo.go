@@ -1,6 +1,7 @@
 package demo
 
 import (
+	"fmt"
 	"goweb/framework/cobra"
 	"log"
 )
@@ -14,6 +15,7 @@ var FooCmd = &cobra.Command{
 	Use:   "Foo",
 	Short: "框架提供的任务Demo",
 	RunE: func(cmd *cobra.Command, args []string) error {
+		fmt.Println("this is a command")
 		return nil
 	},
 }

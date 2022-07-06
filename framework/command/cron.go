@@ -1,6 +1,14 @@
 package command
 
-import "goweb/framework/cobra"
+import (
+	"fmt"
+	"goweb/framework/cobra"
+	"goweb/framework/contract"
+	"io/ioutil"
+	"os"
+	"path/filepath"
+	"strconv"
+)
 
 var isCronDaemon = false
 
@@ -29,10 +37,31 @@ var cronStartCmd = &cobra.Command{
 	Use:   "start",
 	Short: "启动一个定时任务 常驻进程",
 	RunE: func(cmd *cobra.Command, args []string) error {
+		container := cmd.GetContainer()
+
+		dirService := container.MustMake(contract.DirectoryKey).(contract.DirectoryInf)
+
+		pidFolder := dirService.RuntimeFolder() // pid文件的路径
+		serverPidFile := filepath.Join(pidFolder, "cron.pid")
+
+		//logFolder := dirService.LogFolder() // 日志文件的路径
+		//logFile := filepath.Join(logFolder, "cron.log")
+
+		//curFolder := dirService.BaseFolder()
 
 		if isCronDaemon {
 			// 以守护进程的形式开启一个定时任务
 		}
+
+		fmt.Println("start cron job")
+		pid := strconv.Itoa(os.Getpid())
+		fmt.Println("pid is ", pid)
+		err := ioutil.WriteFile(serverPidFile, []byte(pid), 0664)
+		if err != nil {
+			fmt.Errorf("WriteFile error %v", err)
+			return err
+		}
+		fmt.Println("start corn task")
 		cmd.Root().CronClient.Run()
 		return nil
 	},
