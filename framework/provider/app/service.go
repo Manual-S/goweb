@@ -7,6 +7,7 @@ import (
 	"goweb/framework"
 	"goweb/framework/contract"
 	"goweb/framework/util"
+	"path/filepath"
 )
 
 type Directory struct {
@@ -51,7 +52,21 @@ func (d *Directory) BaseFolder() string {
 	return util.GetExecDirectory()
 }
 
+func (d *Directory) StorageFolder() string {
+	return filepath.Join(d.BaseFolder(), "storage")
+}
+
 // ConfigFolder 获取配置文件的路径
 func (d *Directory) ConfigFolder() string {
 	return ""
+}
+
+// RuntimeFolder 定义业务运行的中间态信息
+func (d *Directory) RuntimeFolder() string {
+	return filepath.Join(d.StorageFolder(), "runtime")
+}
+
+// LogFolder 定义日志存储的信息
+func (d *Directory) LogFolder() string {
+	return filepath.Join(d.StorageFolder(), "log")
 }

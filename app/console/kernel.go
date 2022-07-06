@@ -40,5 +40,6 @@ func RunCommand(c framework.Container) error {
 
 // AddNormalCmd 绑定业务自定义的命令
 func AddNormalCmd(rootCmd *cobra.Command) {
-	rootCmd.AddCommand(demo.InitFoo())
+	rootCmd.AddCronCommand("* * * * * *", demo.FooCmd)
+	//rootCmd.AddCommand(demo.InitFoo())
 }

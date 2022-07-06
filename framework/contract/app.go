@@ -11,4 +11,10 @@ type DirectoryInf interface {
 
 	// ConfigFolder 获取配置文件的路径
 	ConfigFolder() string
+
+	// RuntimeFolder 定义业务的运行中间态信息
+	RuntimeFolder() string
+
+	// LogFolder 日志存放的地址
+	LogFolder() string
 }
