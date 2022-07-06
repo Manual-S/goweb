@@ -10,7 +10,7 @@ import (
 
 var appCommand = &cobra.Command{
 	Use:   "app",
-	Short: "业务控制命令",
+	Short: "业务控制命令 控制gin框架的启动",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		cmd.Help()
 		return nil

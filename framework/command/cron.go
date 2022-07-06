@@ -4,11 +4,13 @@ import "goweb/framework/cobra"
 
 var isCronDaemon = false
 
-func initCronCmd() {
+func initCronCmd() *cobra.Command {
 	cronStartCmd.Flags().BoolVarP(&isCronDaemon, "daemon", "d",
 		false, "是否以守护进程形式启动一个定时任务")
 
 	cronCmd.AddCommand(cronStartCmd)
+
+	return cronCmd
 }
 
 var cronCmd = &cobra.Command{
