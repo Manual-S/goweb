@@ -19,7 +19,7 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	"github.com/robfig/cron"
+	"github.com/robfig/cron/v3"
 	"goweb/framework"
 	"io"
 	"os"

@@ -1,7 +1,7 @@
 package cobra
 
 import (
-	"github.com/robfig/cron"
+	"github.com/robfig/cron/v3"
 	"goweb/framework"
 	"log"
 )
@@ -29,7 +29,7 @@ func (c *Command) AddCronCommand(spec string, cmd *Command) {
 	root := c.Root()
 	if root.CronClient == nil {
 		// 初始化一个CronClient
-		root.CronClient = cron.New()
+		root.CronClient = cron.New(cron.WithParser(cron.NewParser(cron.SecondOptional | cron.Minute | cron.Hour | cron.Dom | cron.Month | cron.Dow | cron.Descriptor)))
 		root.CronSpecs = []CronSpec{}
 	}
 
@@ -45,7 +45,6 @@ func (c *Command) AddCronCommand(spec string, cmd *Command) {
 	cronCmd = *cmd
 	cronCmd.args = []string{}
 	cronCmd.SetParentNull()
-	cronCmd.HasParent()
 	cronCmd.SetContainer(root.GetContainer())
 
 	root.CronClient.AddFunc(spec, func() {

@@ -12,7 +12,7 @@ func InitFoo() *cobra.Command {
 
 var FooCmd = &cobra.Command{
 	Use:   "Foo",
-	Short: "定时任务Demo",
+	Short: "框架提供的任务Demo",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		return nil
 	},
