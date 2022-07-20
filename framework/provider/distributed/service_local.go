@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"path/filepath"
 	"syscall"
 	"time"
 )
@@ -29,7 +30,9 @@ func NewLocalDistributedService(params ...interface{}) (interface{}, error) {
 
 func (l *LocalDistributedService) Select(serviceName string, appID string, holdTime time.Duration) (string, error) {
 
-	lockFileName := ""
+	disServer := l.container.MustMake(contract.DirectoryKey).(contract.DirectoryInf)
+	runtimeFolder := disServer.RuntimeFolder()
+	lockFileName := filepath.Join(runtimeFolder, "distribute_"+serviceName)
 	lockFile, err := os.OpenFile(lockFileName, os.O_RDWR|os.O_CREATE, 0666)
 	if err != nil {
 		log.Printf("os.OpenFile error %v", err)
