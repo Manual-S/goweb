@@ -4,6 +4,7 @@ package app
 import (
 	"errors"
 	"flag"
+	"github.com/google/uuid"
 	"goweb/framework"
 	"goweb/framework/contract"
 	"goweb/framework/util"
@@ -16,6 +17,8 @@ type Directory struct {
 	container framework.Container
 	// 基础路径
 	baseFolder string
+	// 表示当前服务的唯一id 可以用于分布式锁
+	appID string
 }
 
 func NewDirectoryService(params ...interface{}) (interface{}, error) {
@@ -24,10 +27,11 @@ func NewDirectoryService(params ...interface{}) (interface{}, error) {
 	}
 	container := params[0].(framework.Container)
 	baseFolder := params[1].(string)
-
+	appID := uuid.New().String()
 	return &Directory{
 		container:  container,
 		baseFolder: baseFolder,
+		appID:      appID,
 	}, nil
 }
 
@@ -69,4 +73,8 @@ func (d *Directory) RuntimeFolder() string {
 // LogFolder 定义日志存储的信息
 func (d *Directory) LogFolder() string {
 	return filepath.Join(d.StorageFolder(), "log")
+}
+
+func (d *Directory) AppID() string {
+	return d.appID
 }

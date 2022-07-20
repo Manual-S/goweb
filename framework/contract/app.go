@@ -17,4 +17,7 @@ type DirectoryInf interface {
 
 	// LogFolder 日志存放的地址
 	LogFolder() string
+
+	// AppID 获取当前服务的appid
+	AppID() string
 }
