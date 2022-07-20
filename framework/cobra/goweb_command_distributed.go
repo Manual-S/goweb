@@ -25,6 +25,11 @@ func (c *Command) AddDistributedCronCommand(serviceName string, spec string, cmd
 
 	dirServer := root.GetContainer().MustMake(contract.DirectoryKey).(contract.DirectoryInf)
 	distributedServer := root.GetContainer().MustMake(contract.DistributedKey).(contract.Distributed)
+	if distributedServer == nil {
+		log.Printf("distributedServer is %v", distributedServer)
+		return
+	}
+
 	appId := dirServer.AppID()
 
 	var cronCmd Command

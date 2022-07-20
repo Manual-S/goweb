@@ -6,12 +6,14 @@ import (
 	"goweb/app/http"
 	"goweb/framework"
 	"goweb/framework/provider/app"
+	"goweb/framework/provider/distributed"
 	"goweb/framework/provider/kernel"
 )
 
 func main() {
 	container := framework.NewContainer()
 	container.Bind(&app.DirectoryProvider{}) // 绑定目录结构服务
+	container.Bind(&distributed.LocalDistributeProvider{})
 
 	// 绑定一个路由服务
 	if engine, err := http.NewHttpEngine(); err == nil {

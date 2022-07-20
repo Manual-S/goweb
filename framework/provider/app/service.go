@@ -3,11 +3,11 @@ package app
 
 import (
 	"errors"
-	"flag"
 	"github.com/google/uuid"
 	"goweb/framework"
 	"goweb/framework/contract"
 	"goweb/framework/util"
+	"log"
 	"path/filepath"
 )
 
@@ -41,17 +41,18 @@ func (d *Directory) Version() string {
 
 func (d *Directory) BaseFolder() string {
 	if d.baseFolder != "" {
+		log.Printf("user d.baseFolder %v", d.baseFolder)
 		return d.baseFolder
 	}
 
 	// 如果没有设置 就使用参数
-	var baseFolder string
-	flag.StringVar(&baseFolder, "base_folder", "", "base_folder的参数")
-	flag.Parse()
-
-	if baseFolder != "" {
-		return baseFolder
-	}
+	//var baseFolder string
+	//flag.StringVar(&baseFolder, "base_folder", "", "base_folder的参数")
+	//flag.Parse()
+	//
+	//if baseFolder != "" {
+	//	return baseFolder
+	//}
 
 	return util.GetExecDirectory()
 }
