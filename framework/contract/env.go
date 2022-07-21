@@ -1,5 +1,12 @@
 package contract
 
+const (
+	EnvProduction  = "product"
+	EnvTest        = "test"
+	EnvDevelopment = "development"
+	EnvKey         = "envkey"
+)
+
 type EnvInf interface {
 	// AppEnv 获取当前的环境
 	AppEnv() string
