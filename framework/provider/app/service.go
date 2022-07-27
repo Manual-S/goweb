@@ -53,8 +53,10 @@ func (d *Directory) BaseFolder() string {
 	//if baseFolder != "" {
 	//	return baseFolder
 	//}
+	path := util.GetExecDirectory()
+	log.Printf("path is %v", path)
+	return path
 
-	return util.GetExecDirectory()
 }
 
 func (d *Directory) StorageFolder() string {

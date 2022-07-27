@@ -4,7 +4,8 @@ const (
 	EnvProduction  = "product"
 	EnvTest        = "test"
 	EnvDevelopment = "development"
-	EnvKey         = "envkey"
+
+	EnvKey = "envkey"
 )
 
 type EnvInf interface {

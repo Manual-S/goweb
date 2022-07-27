@@ -20,10 +20,14 @@ type EnvService struct {
 
 func NewEnvService(params ...interface{}) (interface{}, error) {
 	if len(params) != 1 {
-		return nil, errors.New("params error")
+		err := errors.New("params error")
+		log.Printf("params error %v", err)
+		return nil, err
 	}
 
 	folder := params[0].(string)
+
+	log.Printf("folder is %v", folder)
 
 	envFile, err := os.Open(folder)
 	if err != nil {
@@ -54,7 +58,7 @@ func NewEnvService(params ...interface{}) (interface{}, error) {
 		}
 		envMapping[pair[0]] = pair[1]
 	}
-
+	envMapping["APP_ENV"] = contract.EnvDevelopment
 	return EnvService{
 		folder:     folder,
 		envMapping: envMapping,
@@ -63,7 +67,7 @@ func NewEnvService(params ...interface{}) (interface{}, error) {
 
 // AppEnv 获取当前的环境
 func (e *EnvService) AppEnv() string {
-	return e.envMapping[""]
+	return e.Get("APP_ENV")
 }
 
 // IsExist  判断一个环境变量是否被设置

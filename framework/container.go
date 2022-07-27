@@ -3,6 +3,7 @@ package framework
 
 import (
 	"errors"
+	"fmt"
 	"sync"
 )
 
@@ -68,6 +69,7 @@ func (w *WebContainer) findServiceProvider(key string) ServiceProvider {
 func (w *WebContainer) newInstance(p ServiceProvider, params []interface{}) (interface{}, error) {
 	err := p.Boot(w)
 	if err != nil {
+		fmt.Printf("Boot error %v\n", err)
 		return nil, nil
 	}
 
@@ -79,6 +81,7 @@ func (w *WebContainer) newInstance(p ServiceProvider, params []interface{}) (int
 	method := p.Register(w)
 	ins, err := method(params...)
 	if err != nil {
+		fmt.Printf("method error %v\n", err)
 		return nil, err
 	}
 	return ins, nil
@@ -91,7 +94,9 @@ func (w *WebContainer) make(key string, params []interface{}, forceNew bool) (in
 	// 查询是否已经注册过服务提供者 如果没有注册 返回错误
 	provider := w.findServiceProvider(key)
 	if provider == nil {
-		return nil, errors.New("provider is nil")
+		err := errors.New("provider is nil")
+		fmt.Printf("findServiceProvider error %v", err)
+		return nil, err
 	}
 	if forceNew {
 		// 强制初始化
@@ -106,9 +111,11 @@ func (w *WebContainer) make(key string, params []interface{}, forceNew bool) (in
 	// 容器中没有完成实例化
 	ins, err := w.newInstance(provider, params)
 	if err != nil {
+		fmt.Printf("newInstance error %v\n", err)
 		return nil, err
 	}
 
+	fmt.Printf("newInstance suc")
 	w.instance[key] = ins
 
 	return ins, nil
@@ -121,6 +128,7 @@ func (w *WebContainer) Make(key string) (interface{}, error) {
 func (w *WebContainer) MustMake(key string) interface{} {
 	ins, err := w.make(key, nil, false)
 	if err != nil {
+		fmt.Printf("MustMake error %v\n", err)
 		panic(err)
 	}
 	return ins

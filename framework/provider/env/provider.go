@@ -7,6 +7,8 @@ import (
 
 type EnvProvider struct {
 	framework.ServiceProvider
+
+	Folder string
 }
 
 // Name 获取服务提供者的名字
@@ -21,6 +23,8 @@ func (e *EnvProvider) IsDefer() bool {
 
 // Boot 调用实例化服务时调用
 func (e *EnvProvider) Boot(container framework.Container) error {
+	app := container.MustMake(contract.DirectoryKey).(contract.DirectoryInf)
+	e.Folder = app.BaseFolder()
 	return nil
 }
 
@@ -31,5 +35,5 @@ func (e *EnvProvider) Register(container framework.Container) framework.NewInsta
 
 // Params 获取params参数
 func (e *EnvProvider) Params(container framework.Container) []interface{} {
-	return nil
+	return []interface{}{e.Folder}
 }
