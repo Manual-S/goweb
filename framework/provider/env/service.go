@@ -8,6 +8,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"path"
 	"strings"
 )
 
@@ -24,30 +25,29 @@ func NewEnvService(params ...interface{}) (interface{}, error) {
 		log.Printf("params error %v", err)
 		return nil, err
 	}
+	envMapping := make(map[string]string)
 
 	folder := params[0].(string)
 
-	log.Printf("folder is %v", folder)
+	file := path.Join(folder, ".env")
 
-	envFile, err := os.Open(folder)
-	if err != nil {
-		log.Printf("open file error %v", err)
-		return nil, err
-	}
-	defer envFile.Close()
-	br := bufio.NewReader(envFile)
+	envFile, err := os.Open(file)
+	if err == nil {
+		// 读取env配置文件失败也没有问题
+		br := bufio.NewReader(envFile)
+		defer envFile.Close()
 
-	envMapping := make(map[string]string)
-	for {
-		envLine, _, c := br.ReadLine()
-		if c == io.EOF {
-			break
+		for {
+			envLine, _, c := br.ReadLine()
+			if c == io.EOF {
+				break
+			}
+			s := bytes.SplitN(envLine, []byte{'='}, 2)
+			if len(s) < 2 {
+				continue
+			}
+			envMapping[string(s[0])] = string(s[1])
 		}
-		s := bytes.SplitN(envLine, []byte{'='}, 2)
-		if len(s) < 2 {
-			continue
-		}
-		envMapping[string(s[0])] = string(s[1])
 	}
 
 	// 替换所有的变量
@@ -59,7 +59,7 @@ func NewEnvService(params ...interface{}) (interface{}, error) {
 		envMapping[pair[0]] = pair[1]
 	}
 	envMapping["APP_ENV"] = contract.EnvDevelopment
-	return EnvService{
+	return &EnvService{
 		folder:     folder,
 		envMapping: envMapping,
 	}, nil
