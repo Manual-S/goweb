@@ -4,11 +4,9 @@ import (
 	"errors"
 	"fmt"
 	"goweb/app/console/command/demo"
-	"goweb/framework/command"
-	"time"
-
 	"goweb/framework"
 	"goweb/framework/cobra"
+	"goweb/framework/command"
 )
 
 // RunCommand 初始化根command并且执行
@@ -41,8 +39,8 @@ func RunCommand(c framework.Container) error {
 
 // AddNormalCmd 绑定业务自定义的命令
 func AddNormalCmd(rootCmd *cobra.Command) {
-	//rootCmd.AddCronCommand("* * * * * *", demo.FooCmd)
+	rootCmd.AddCronCommand("* * * * * *", demo.FooCmd)
 	//rootCmd.AddCommand(demo.InitFoo())
 	// 分布式定时任务
-	rootCmd.AddDistributedCronCommand("foo_func_for_test", "*/5 * * * * *", demo.FooCmd, 2*time.Second)
+	//rootCmd.AddDistributedCronCommand("foo_func_for_test", "*/5 * * * * *", demo.FooCmd, 2*time.Second)
 }
